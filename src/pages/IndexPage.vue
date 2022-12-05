@@ -82,7 +82,7 @@ const cards = [
     subtitle: 'show your decisions',
     description:
       'Lorem ipsum dolor sit amet consectetur adipisicing elit. Perspiciatis voluptatibus, molestias dolores voluptas dicta iure illo. Vero voluptate velit aperiam praesentium accusantium unde esse? Sunt earum quas non excepturi sit.',
-    route: 'features',
+    route: 'decisionMatrix',
     icon: 'functions',
     expanded: ref(false),
   },
