@@ -4,7 +4,8 @@ export interface Alternative {
   id: string;
   name: string;
   description: string;
-  features: Feature[];
+  assessments: Assessment[];
+  score: number;
 }
 
 export interface Feature {
@@ -13,4 +14,11 @@ export interface Feature {
   description: string;
   status: Status;
   isExclusive: boolean;
+}
+
+export interface Assessment {
+  id: string;
+  feature: Feature;
+  score: number;
+  justification: string;
 }

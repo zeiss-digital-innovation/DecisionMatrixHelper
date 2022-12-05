@@ -4,7 +4,9 @@
       <q-toolbar>
         <q-btn dense flat round icon="menu" @click="toggleLeftDrawer" />
 
-        <q-toolbar-title> Decision Matrix Helper </q-toolbar-title>
+        <q-toolbar-title
+          ><q-btn label="Decision Matrix Helper" flat to="/" />
+        </q-toolbar-title>
       </q-toolbar>
     </q-header>
 
@@ -31,7 +33,9 @@
 
           <q-item clickable v-ripple to="Alternatives">
             <q-item-section avatar>
-              <q-icon name="build" />
+              <q-icon name="build" /><q-badge>{{
+                alternativesStore.alternatives.length
+              }}</q-badge>
             </q-item-section>
 
             <q-item-section> Alternatives </q-item-section>
@@ -39,7 +43,8 @@
 
           <q-item clickable v-ripple to="features">
             <q-item-section avatar>
-              <q-icon name="checklist"></q-icon>
+              <q-icon name="checklist"></q-icon
+              ><q-badge>{{ store.features.length }}</q-badge>
             </q-item-section>
 
             <q-item-section> Features </q-item-section>
@@ -73,7 +78,12 @@
 </template>
 
 <script setup lang="ts">
+import { useAlternativesStore } from 'src/stores/alternative';
+import { useFeaturesStore } from 'src/stores/features';
 import { ref } from 'vue';
+
+const store = useFeaturesStore();
+const alternativesStore = useAlternativesStore();
 
 const leftDrawerOpen = ref(false);
 const miniState = ref(false);
