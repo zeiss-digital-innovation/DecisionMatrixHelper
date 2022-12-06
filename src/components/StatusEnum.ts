@@ -1,7 +1,7 @@
 export enum Status {
-  'very important' = 3,
-  'important' = 2,
-  'less important' = 1,
-  'unimportant' = 0,
-  'undefined' = -1,
+  'very important' = 4,
+  'important' = 3,
+  'less important' = 2,
+  'unimportant' = 1,
+  'undefined' = 0,
 }
