@@ -21,7 +21,7 @@
           </q-card-actions>
         </q-card>
       </q-dialog>
-      <q-stepper v-model="step" ref="stepper" color="primary" animated>
+      <q-stepper v-model="step" ref="stepper" color="primary" animated flat>
         <q-step
           :name="1"
           title="Add Features"
@@ -47,8 +47,16 @@
         </q-step>
 
         <template v-slot:navigation>
-          <q-stepper-navigation>
+          <q-stepper-navigation align="right">
             <q-space />
+            <q-btn
+              v-if="step > 1"
+              flat
+              color="primary"
+              @click="$refs.stepper.previous()"
+              label="Back"
+              class="q-ml-sm"
+            ></q-btn>
             <q-btn
               @click="$refs.stepper.next()"
               color="primary"
@@ -60,14 +68,6 @@
               class="q-ml-sm"
               @click="handleAddFeature(featureStore.currentFeature)"
             ></q-btn> -->
-            <q-btn
-              v-if="step > 1"
-              flat
-              color="primary"
-              @click="$refs.stepper.previous()"
-              label="Back"
-              class="q-ml-sm"
-            ></q-btn>
           </q-stepper-navigation>
         </template>
       </q-stepper>
