@@ -1,5 +1,6 @@
 <template>
   <q-table
+    flat
     title="Alternatives"
     :rows="store.alternatives"
     :columns="columns"

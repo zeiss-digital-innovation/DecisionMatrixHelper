@@ -1,5 +1,6 @@
 <template>
   <q-table
+    flat
     title="Features"
     :rows="store.features"
     :columns="columns"
