@@ -106,7 +106,14 @@ export const useAlternativesStore = defineStore('Alternatives', {
       score: 0,
     },
   }),
-  getters: {},
+  getters: {
+    // getAlternativeById: (state) => {
+    //   return (alternativeId: string) =>
+    //     state.alternatives.find(
+    //       (alternative) => alternative.id === alternativeId
+    //     );
+    // },
+  },
   actions: {
     addAlternative(alternative: Alternative) {
       if (this.alternatives.find((feat) => feat.id === alternative.id)) return;
@@ -123,45 +130,16 @@ export const useAlternativesStore = defineStore('Alternatives', {
       });
     },
 
-    // updateAlternatives(features: Feature[]): void {
-    //   console.log('refreshing');
-    //   this.alternatives.forEach((alternative) => {
-    //     if (alternative.assessments.length < features.length) {
-    //       // new feature was added
-    //       const assessedFeatures = new Array(features.length) as Feature[];
+    assessAllFeaturesOfAlternative(alternative: Alternative) {
+      const initialValue = 0;
+      alternative.score = alternative.assessments.reduce(
+        (accumulator, assessment) =>
+          accumulator + assessment.score * assessment.feature.status,
+        initialValue
+      );
+      if (alternative.score < 0) alternative.score = 0;
+    },
 
-    //       alternative.assessments.forEach((assessment) => {
-    //         assessedFeatures.push(assessment.feature);
-    //       });
-    //       const diff = features.filter(
-    //         (feat) => !assessedFeatures.includes(feat)
-    //       );
-    //       diff.forEach((element) => {
-    //         alternative.assessments.push({
-    //           id: uuid(),
-    //           feature: element,
-    //           justification: '',
-    //           score: 0,
-    //         });
-    //       });
-    //     } else if (alternative.assessments.length > features.length) {
-    //       // feature was deleted
-    //       const assessedFeatures = new Array(features.length) as Feature[];
-
-    //       alternative.assessments.forEach((assessment) => {
-    //         assessedFeatures.push(assessment.feature);
-    //       });
-    //       const diff = assessedFeatures.filter(
-    //         (feat) => !features.includes(feat)
-    //       );
-    //       diff.forEach((element) => {
-    //         alternative.assessments = alternative.assessments.filter(
-    //           (assessment) => assessment.feature.id !== element.id
-    //         );
-    //       });
-    //     } else return;
-    //   });
-    // },
     updateAlternativeWithFeature(feature: Feature) {
       this.alternatives.forEach((alternative) => {
         const filteredAssessments = alternative.assessments.filter(
