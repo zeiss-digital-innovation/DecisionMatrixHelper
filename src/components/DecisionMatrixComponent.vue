@@ -39,7 +39,8 @@
                       ? 'text-warning'
                       : 'text-secondary'
                   "
-                  ><q-badge color="secondary"
+                >
+                  <q-badge color="secondary"
                     ><q-rating
                       color="white"
                       v-model="assessment.feature.status"
@@ -58,14 +59,9 @@
                 transition-next="slide-up"
               >
               </q-tab-panels>
-              <q-card flat class="text-black" align="justify">
-                <q-item class="q-ma-lg">
-                  <q-item-section avatar>
-                    <q-avatar>
-                      <img src="https://cdn.quasar.dev/img/boy-avatar.png" />
-                    </q-avatar>
-                  </q-item-section>
-                  <q-item-section>
+              <q-card flat class="text-black bg-grey-3" align="justify">
+                <q-item>
+                  <q-item-section class="col-7">
                     <q-item-label>{{
                       featureStore.getFeatureByName(innerTab)?.name
                     }}</q-item-label>
@@ -137,6 +133,12 @@
       <q-space />
       <q-btn
         class="q-ma-md"
+        label="show results"
+        color="secondary"
+        to="results"
+      ></q-btn>
+      <q-btn
+        class="q-ma-md"
         label="Assess Alternatives"
         @click="handleAssessment"
         color="primary"
@@ -155,7 +157,7 @@ const store = useAlternativesStore();
 const featureStore = useFeaturesStore();
 
 const tab = ref(store.alternatives[0]?.name);
-const innerTab = ref('');
+const innerTab = ref(featureStore.features[0]?.name);
 const splitterModel = ref(20);
 const isEditable = ref(false);
 
@@ -171,5 +173,6 @@ function handleAssessment() {
 
     return 0;
   });
+  store.isAssessed = true;
 }
 </script>

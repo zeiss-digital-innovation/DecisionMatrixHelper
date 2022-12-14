@@ -16,6 +16,7 @@ const routes: RouteRecordRaw[] = [
         path: '/decisionmatrix',
         component: () => import('pages/DecisionMatrixPage.vue'),
       },
+      { path: '/results', component: () => import('pages/ResultsPage.vue') },
     ],
   },
 
