@@ -1,8 +1,6 @@
 <template>
-  <q-page>
-    <div
-      class="q-pa-md row items-start q-gutter-md justify-evenly fixed-center"
-    >
+  <q-page class="flex justify-center items-center">
+    <div class="q-pa-md row items-start q-gutter-md justify-evenly">
       <q-card style="width: 220px" v-for="card in cards" :key="card.route">
         <q-card-section avatar class="q-ml-lg q-mt-lg" horizontal>
           <q-icon size="md" :name="card.icon" color="secondary" />
