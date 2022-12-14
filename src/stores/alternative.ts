@@ -9,110 +9,23 @@ const featureStore = useFeaturesStore();
 
 export const useAlternativesStore = defineStore('Alternatives', {
   state: () => ({
-    alternatives: [
-      {
-        id: uuid(),
-        name: 'Alternative1',
-        description: 'Lorem ipsum dolor',
-        assessments: [
-          {
-            id: uuid(),
-            feature: {
-              name: 'Feature5',
-              description: 'Feature description',
-              status: Status.undefined,
-              isExclusive: true,
-            },
-            score: 0,
-            justification: 'justification1',
-          },
-          {
-            id: uuid(),
-            feature: {
-              name: 'Feature4',
-              description: 'Feature description',
-              status: Status.undefined,
-              isExclusive: true,
-            },
-            score: 0,
-            justification: 'justification2',
-          },
-        ],
-      },
-      {
-        id: uuid(),
-        name: 'Alternative2',
-        description: 'Lorem ipsum dolor',
-        assessments: [
-          {
-            id: uuid(),
-            feature: {
-              name: 'Feature5',
-              description: 'Feature description',
-              status: Status.undefined,
-              isExclusive: true,
-            },
-            score: 0,
-            justification: 'justification1',
-          },
-          {
-            id: uuid(),
-            feature: {
-              name: 'Feature4',
-              description: 'Feature description',
-              status: Status.undefined,
-              isExclusive: true,
-            },
-            score: 0,
-            justification: 'justification2',
-          },
-        ],
-      },
-      {
-        id: uuid(),
-        name: 'Alternative3',
-        description: 'Lorem ipsum dolor',
-        assessments: [
-          {
-            id: uuid(),
-            feature: {
-              name: 'Feature1',
-              description: 'Feature description',
-              status: Status.undefined,
-              isExclusive: true,
-            },
-            score: 0,
-            justification: 'justification1',
-          },
-          {
-            id: uuid(),
-            feature: {
-              name: 'Feature4',
-              description: 'Feature description',
-              status: Status.undefined,
-              isExclusive: true,
-            },
-            score: 0,
-            justification: 'justification2',
-          },
-        ],
-      },
-    ] as Alternative[],
-    currentAlternative: {
-      id: uuid(),
-      name: 'AlternativenName',
-      description: 'Lorem ipsum dolor',
-      assessments: [],
-      score: 0,
-    },
+    alternatives: [] as Alternative[],
+
+    isAssessed: false,
   }),
   getters: {
-    // getAlternativeById: (state) => {
-    //   return (alternativeId: string) =>
-    //     state.alternatives.find(
-    //       (alternative) => alternative.id === alternativeId
-    //     );
-    // },
+    alternativeNames: (state) => {
+      return state.alternatives.map((alternative) => alternative.name);
+    },
+    assessmentByAlternative: (state) => (alternative: Alternative) => {
+      const alternativeFromState = state.alternatives.find(
+        (alt) => alt.id === alternative.id
+      );
+      if (alternativeFromState) {
+        return alternativeFromState.assessments;
+      }
+      return [];
+    },
   },
   actions: {
     addAlternative(alternative: Alternative) {
@@ -161,7 +74,6 @@ export const useAlternativesStore = defineStore('Alternatives', {
       return this.alternatives?.filter((x: Alternative) => x.name === name)[0];
     },
     getAlternativeById(id: string): Alternative {
-      if (this.currentAlternative.id === id) return this.currentAlternative;
       return this.alternatives?.filter((x: Alternative) => x.id === id)[0];
     },
     deleteAlternative(alternative: Alternative) {
