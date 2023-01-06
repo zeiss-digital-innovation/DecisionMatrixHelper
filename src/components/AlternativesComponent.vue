@@ -72,9 +72,6 @@
             autogrow
             borderless
             dense
-            :validate="descriptionValidation"
-            :error="errorNames"
-            :error-message="errorMessageNames"
           ></q-input>
         </q-td>
         <q-td key="assessment" :props="props">
@@ -104,10 +101,12 @@
             v-for="assessment in props.row.assessments"
             :key="assessment.id"
           >
-            <q-item>
+            <q-item class="justify-evenly">
               <q-input
                 v-model="assessment.feature.name"
-                class="q-mr-lg q-pa-sm"
+                :class="
+                  assessment.feature.isExclusive ? 'text-red' : 'text-black'
+                "
                 type="text"
                 readonly
                 borderless
@@ -118,12 +117,14 @@
                     v-if="assessment.feature.isExclusive"
                   /> </template
               ></q-input>
+
               <q-input
                 style="min-width: 350px"
                 type="textarea"
                 v-model="assessment.justification"
                 autogrow
               ></q-input>
+
               <q-rating
                 v-model="assessment.score"
                 size="md"
@@ -134,26 +135,6 @@
         </q-td>
       </q-tr>
     </template>
-
-    <!-- <template v-slot:bottom-row>
-      <q-space />
-      <q-btn
-        class="q-ma-md"
-        color="primary"
-        icon="add"
-        label=""
-        @click="handleNewAlternativeEntry"
-        no-caps
-      ></q-btn>
-      <q-btn
-        class="q-ma-md"
-        color="primary"
-        icon="delete"
-        label=""
-        @click="handleDeleteAllAlternatives"
-        no-caps
-      ></q-btn
-    ></template> -->
   </q-table>
 </template>
 
@@ -166,35 +147,7 @@ import { useFeaturesStore } from 'src/stores/features';
 
 const store = useAlternativesStore();
 const featureStore = useFeaturesStore();
-
-const errorNames = ref(false);
-const errorMessageNames = ref('');
 const isReadOnly = ref(false);
-
-function nameValidation(val: string) {
-  if (val.length < 4 || val.length > 20) {
-    errorNames.value = true;
-    errorMessageNames.value =
-      'The Name must be between 4 and 20 characters long!';
-    return false;
-  }
-  errorNames.value = false;
-  errorMessageNames.value = '';
-  return true;
-}
-
-function descriptionValidation(val: string) {
-  if (val.length < 4 || val.length > 1000) {
-    errorNames.value = true;
-    errorMessageNames.value =
-      'The Description must be between 4 and 1000 characters long!';
-    return false;
-  }
-  errorNames.value = false;
-  errorMessageNames.value = '';
-  return true;
-}
-
 const visibleColumns = ref(['name', 'description', 'status', 'assessment']);
 const columns = [
   {

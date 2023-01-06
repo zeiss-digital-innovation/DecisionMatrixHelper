@@ -9,7 +9,7 @@
     "lint": "eslint --ext .js,.ts,.vue ./",
     "format": "prettier --write \"**/*.{js,ts,vue,scss,html,md,json}\" --ignore-path .gitignore",
     "test": "echo \"No test specified\" && exit 0",
-    "deploy": "quasar build -m pwa && gh-pages -d dist/pwa"
+    "deploy": "quasar build -m pwa && gh-pages -d dist/pwa -r https://github.com/zeiss-digital-innovation/DecisionMatrixHelper.git "
   },
   "dependencies": {
     "@quasar/extras": "^1.0.0",
@@ -45,5 +45,5 @@
     "npm": ">= 6.13.4",
     "yarn": ">= 1.21.1"
   },
-  "homepage": "http: //https://eshadepunkt.github.io/DecisionMatrixHelperVite"
+  "homepage": "http: //https://zeiss-digital-innovation.github.io/DecisionMatrixHelper/"
 }

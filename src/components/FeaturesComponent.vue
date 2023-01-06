@@ -73,9 +73,6 @@
             autogrow
             borderless
             dense
-            :validate="descriptionValidation"
-            :error="errorNames"
-            :error-message="errorMessageNames"
           ></q-input> </q-td
         ><q-td key="isExclusive" :props="props" auto-width>
           <q-checkbox v-model="props.row.isExclusive" />
