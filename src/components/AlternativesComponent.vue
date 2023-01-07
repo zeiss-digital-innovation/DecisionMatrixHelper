@@ -105,7 +105,9 @@
               <q-input
                 v-model="assessment.feature.name"
                 :class="
-                  assessment.feature.isExclusive ? 'text-red' : 'text-black'
+                  assessment.feature.isExclusive
+                    ? 'text-warning'
+                    : 'text-secondary'
                 "
                 type="text"
                 readonly
