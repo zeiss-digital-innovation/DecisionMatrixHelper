@@ -1,16 +1,14 @@
 import { defineStore } from 'pinia';
-import { colors } from 'quasar';
-import { Status } from 'src/components/StatusEnum';
 import { v4 as uuid } from 'uuid';
-import { Alternative, Feature } from '../components/models';
+import { Alternative, Assessment, Feature } from '../components/models';
 import { useFeaturesStore } from './features';
+import { LocalStorage } from 'quasar';
 
 const featureStore = useFeaturesStore();
 
 export const useAlternativesStore = defineStore('Alternatives', {
   state: () => ({
     alternatives: [] as Alternative[],
-
     isAssessed: false,
   }),
   getters: {
@@ -34,7 +32,6 @@ export const useAlternativesStore = defineStore('Alternatives', {
     },
 
     updateAlternative(alternative: Alternative): void {
-      console.log('updating: ', alternative.id);
       this.alternatives = this.alternatives.map((feat) => {
         if (feat.id === alternative.id) {
           return alternative;
@@ -85,13 +82,16 @@ export const useAlternativesStore = defineStore('Alternatives', {
     deleteAssessmentWithFeature(feature: Feature) {
       this.alternatives.forEach((alternative) => {
         const filteredAssessments = alternative.assessments.filter(
-          (assessment) => assessment.feature.id != feature.id
+          (assessment) => assessment.feature.id !== feature.id
         );
         if (filteredAssessments.length > 0) {
           alternative.assessments = filteredAssessments;
+        } else {
+          alternative.assessments = [] as Assessment[];
         }
       });
     },
+
     deleteAllAlternatives() {
       this.alternatives.splice(0, this.alternatives.length);
     },

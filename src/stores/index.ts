@@ -1,5 +1,5 @@
-import { store } from 'quasar/wrappers'
-import { createPinia } from 'pinia'
+import { store } from 'quasar/wrappers';
+import { createPinia } from 'pinia';
 import { Router } from 'vue-router';
 
 /*
@@ -23,10 +23,26 @@ declare module 'pinia' {
  */
 
 export default store((/* { ssrContext } */) => {
-  const pinia = createPinia()
+  const pinia = createPinia();
 
-  // You can add Pinia plugins here
-  // pinia.use(SomePiniaPlugin)
+  pinia.use((context) => {
+    const storeId = context.store.$id;
 
-  return pinia
-})
+    const serializer = {
+      serialize: JSON.stringify,
+      deserialize: JSON.parse,
+    };
+    const fromStorage = serializer.deserialize(
+      localStorage.getItem(storeId) ?? ''
+    );
+
+    if (fromStorage) {
+      context.store.$patch(fromStorage);
+    }
+
+    context.store.$subscribe((mutation, state) => {
+      localStorage.setItem(storeId, serializer.serialize(state));
+    });
+  });
+  return pinia;
+});
