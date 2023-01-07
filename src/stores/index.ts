@@ -1,6 +1,7 @@
 import { store } from 'quasar/wrappers';
 import { createPinia } from 'pinia';
 import { Router } from 'vue-router';
+import { LocalStorage } from 'quasar';
 
 /*
  * When adding new properties to stores, you should also
@@ -32,12 +33,13 @@ export default store((/* { ssrContext } */) => {
       serialize: JSON.stringify,
       deserialize: JSON.parse,
     };
-    const fromStorage = serializer.deserialize(
-      localStorage.getItem(storeId) ?? ''
-    );
-
-    if (fromStorage) {
-      context.store.$patch(fromStorage);
+    if (LocalStorage.has(storeId)) {
+      const fromStorage = serializer.deserialize(
+        localStorage.getItem(storeId) ?? ''
+      );
+      if (fromStorage) {
+        context.store.$patch(fromStorage);
+      }
     }
 
     context.store.$subscribe((mutation, state) => {
