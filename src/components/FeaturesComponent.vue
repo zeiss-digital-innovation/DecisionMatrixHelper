@@ -239,6 +239,11 @@ function handleDeleteTableEntry(feature: Feature) {
   alternativesStore.deleteAssessmentWithFeature(feature);
 }
 function handleDeleteAllFeatures() {
+  let features = [...store.features];
+  console.log(features);
   store.deleteAllFeatures();
+  features.forEach((feat) =>
+    alternativesStore.deleteAssessmentWithFeature(feat)
+  );
 }
 </script>
