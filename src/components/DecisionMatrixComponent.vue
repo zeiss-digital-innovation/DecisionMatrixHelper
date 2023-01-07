@@ -59,7 +59,7 @@
                 transition-next="slide-up"
               >
               </q-tab-panels>
-              <q-card flat class="text-black bg-grey-3" align="justify">
+              <q-card flat class="text-black q-mt-md" align="justify">
                 <q-item>
                   <q-item-section class="col-7">
                     <q-item-label>{{
