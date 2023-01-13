@@ -104,27 +104,53 @@
     </q-dialog>
     <q-dialog v-model="isLoading" persistent>
       <q-card>
+        <q-toolbar class="bg-primary text-white">
+          <q-icon name="upload" size="md" />
+          <q-toolbar-title><span>Load</span> State from Disk</q-toolbar-title>
+
+          <q-btn flat round dense icon="close" v-close-popup />
+        </q-toolbar>
         <q-card-section class="row items-center">
-          <q-avatar icon="upload" color="primary" text-color="white" />
           <span class="q-ml-sm q-mt-md"
-            >You are going to load a state from disk. This will erase the state
-            you worked on so far. Are you sure you want to do that?</span
+            ><p>
+              You are going to load a state from disk. This will erase the state
+              you worked on so far.
+            </p>
+            <p
+              class="text-warning text-bold text-center text-h6"
+              v-if="filePicker"
+            >
+              Are you sure you want to do that?
+            </p></span
           >
         </q-card-section>
+        <q-card-section>
+          <q-file
+            v-model="filePicker"
+            clearable
+            accept=".dmh"
+            counter
+            label="Choose your file to upload"
+          ></q-file
+        ></q-card-section>
 
-        <q-card-actions align="right">
-          <q-file v-model="filePicker"></q-file>
+        <q-card-actions align="left">
+          <q-checkbox
+            v-if="filePicker"
+            v-model="isSure"
+            label="I want to replace the current state of the app"
+          ></q-checkbox>
+          <q-space />
           <q-btn flat label="Cancel" color="primary" v-close-popup />
           <q-btn
-            flat
             icon="upload "
             label="Upload"
             color="primary"
             v-close-popup
+            :disable="!filePicker || !isSure"
             @click="handleStateUpload"
           />
         </q-card-actions>
-        <pre>{{ filePicker }}</pre>
       </q-card>
     </q-dialog>
     <q-page-container>
@@ -134,14 +160,12 @@
 </template>
 
 <script setup lang="ts">
-import { file, objectTypeCallProperty } from '@babel/types';
-import { readFile } from 'fs';
 import { exportFile, LocalStorage } from 'quasar';
-import piniaStore from 'src/stores/index';
 import { useAlternativesStore } from 'src/stores/alternative';
 import { useFeaturesStore } from 'src/stores/features';
+import { getActivePinia } from 'pinia';
 import { ref } from 'vue';
-import { Console } from 'console';
+import { RouterView } from 'vue-router';
 
 const store = useFeaturesStore();
 const alternativesStore = useAlternativesStore();
@@ -150,6 +174,8 @@ const leftDrawerOpen = ref(false);
 const miniState = ref(false);
 
 const isSaving = ref(false);
+const isSure = ref(false);
+
 const isLoading = ref(false);
 const filePicker = ref<File>();
 
@@ -165,7 +191,6 @@ function drawerClick(e: Event) {
 }
 function handleStateDownload(e: Event) {
   const storedData = JSON.stringify(LocalStorage.getAll(), null, 2);
-
   const status = exportFile(
     'DecisionMatrix.dmh',
     storedData,
@@ -181,8 +206,11 @@ async function handleStateUpload() {
   const text = await filePicker.value.text();
   const data = JSON.parse(text);
 
-  Object.keys(data).forEach((key) =>
-    localStorage.setItem(key, Object(data[key]))
-  );
+  Object.keys(data).forEach((key) => {
+    localStorage.setItem(key, Object(data[key]));
+  });
+  //TODO: find proper handling of store hydration
+  // this is a dirty fix in order to override the store
+  window.location.reload();
 }
 </script>
