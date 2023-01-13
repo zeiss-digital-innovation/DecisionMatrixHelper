@@ -111,30 +111,6 @@
                       ><q-badge label="Beta" floating></q-badge
                     ></q-btn>
                   </q-item-section>
-                  <q-item-section>
-                    <q-rating
-                      v-if="
-                        store
-                          .getAlternativeByName(tab)
-                          .assessments.find(
-                            (feat) =>
-                              feat.feature.id ===
-                              featureStore.getFeatureByName(innerTab).id
-                          ) != undefined
-                      "
-                      v-model="
-                        store
-                          .getAlternativeByName(tab)
-                          .assessments.filter(
-                            (feat) =>
-                              feat.feature.id ===
-                              featureStore.getFeatureByName(innerTab).id
-                          )[0].score
-                      "
-                      color="secondary"
-                      size="lg"
-                    />
-                  </q-item-section>
                 </q-item>
 
                 <q-separator />
@@ -168,7 +144,28 @@
                   <q-separator vertical />
 
                   <q-card-section class="col-4">
-                    Lorem ipsum dolor sit amet, consectetur adipiscing elit.
+                    <q-rating
+                      v-if="
+                        store
+                          .getAlternativeByName(tab)
+                          .assessments.find(
+                            (feat) =>
+                              feat.feature.id ===
+                              featureStore.getFeatureByName(innerTab).id
+                          ) != undefined
+                      "
+                      v-model="
+                        store
+                          .getAlternativeByName(tab)
+                          .assessments.filter(
+                            (feat) =>
+                              feat.feature.id ===
+                              featureStore.getFeatureByName(innerTab).id
+                          )[0].score
+                      "
+                      color="secondary"
+                      size="lg"
+                    />
                   </q-card-section>
                 </q-card-section>
               </q-card>
