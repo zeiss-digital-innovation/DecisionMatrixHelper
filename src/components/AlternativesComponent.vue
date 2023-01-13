@@ -103,9 +103,11 @@
           >
             <q-item class="justify-evenly">
               <q-input
-                v-model="assessment.feature.name"
+                v-model="
+                  featureStore.getFeatureById(assessment.feature.id).name
+                "
                 :class="
-                  assessment.feature.isExclusive
+                  featureStore.getFeatureById(assessment.feature.id).isExclusive
                     ? 'text-warning'
                     : 'text-secondary'
                 "

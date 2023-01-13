@@ -1,10 +1,6 @@
 import { defineStore } from 'pinia';
 import { v4 as uuid } from 'uuid';
 import { Alternative, Assessment, Feature } from '../components/models';
-import { useFeaturesStore } from './features';
-import { LocalStorage } from 'quasar';
-
-const featureStore = useFeaturesStore();
 
 export const useAlternativesStore = defineStore('Alternatives', {
   state: () => ({
@@ -55,7 +51,9 @@ export const useAlternativesStore = defineStore('Alternatives', {
         const filteredAssessments = alternative.assessments.filter(
           (assessment) => assessment.feature.id === feature.id
         );
+
         if (filteredAssessments.length === 0) {
+          //no feature found
           const newAssessment = {
             id: uuid(),
             feature: feature,
@@ -63,7 +61,12 @@ export const useAlternativesStore = defineStore('Alternatives', {
               'justification ' + (alternative.assessments.length + 1),
             score: 0,
           };
+
           return alternative.assessments.push(newAssessment);
+        }
+        if (filteredAssessments.length === 1) {
+          //found one feature - replacing the object ref
+          filteredAssessments[0].feature = feature;
         }
       });
     },

@@ -10,7 +10,7 @@
   >
     <template v-slot:top>
       <q-btn
-        class="q-ma-md"
+        class="q-ma-sm"
         color="primary"
         icon="add"
         label=""
@@ -18,13 +18,22 @@
         no-caps
       ></q-btn>
       <q-btn
-        class="q-ma-md"
-        color="primary"
+        class="q-ma-sm"
+        color="secondary"
         icon="delete"
         label=""
         @click="handleDeleteAllFeatures"
         no-caps
       ></q-btn>
+      <!-- <q-btn
+        class="q-ma-sm"
+        color="accent"
+        icon="refresh"
+        label="Sync Alternatives"
+        @click="handleSyncWithAlternatives"
+        no-caps
+        ><q-badge label="Beta" floating></q-badge
+      ></q-btn> -->
       <q-space />
 
       <q-select
@@ -90,6 +99,7 @@
             dense
             :clearable="props.row.status != Status.undefined"
             @clear="props.row.status = Status.undefined"
+            @update:model-value="handleStatusChange(props.row)"
           ></q-select>
         </q-td>
 
@@ -119,8 +129,6 @@ import { useAlternativesStore } from 'src/stores/alternative';
 const store = useFeaturesStore();
 const alternativesStore = useAlternativesStore();
 
-const errorNames = ref(false);
-const errorMessageNames = ref('');
 const visibleColumns = ref([
   'name',
   'description',
@@ -129,30 +137,6 @@ const visibleColumns = ref([
   'isExclusive',
 ]);
 const isReadOnly = ref(false);
-
-function nameValidation(val: string) {
-  if (val.length < 4 || val.length > 20) {
-    errorNames.value = true;
-    errorMessageNames.value =
-      'The Name must be between 4 and 20 characters long!';
-    return false;
-  }
-  errorNames.value = false;
-  errorMessageNames.value = '';
-  return true;
-}
-
-function descriptionValidation(val: string) {
-  if (val.length < 4 || val.length > 1000) {
-    errorNames.value = true;
-    errorMessageNames.value =
-      'The Description must be between 4 and 1000 characters long!';
-    return false;
-  }
-  errorNames.value = false;
-  errorMessageNames.value = '';
-  return true;
-}
 
 // const options = Object.values(Status).filter((item) =>
 //   isNaN(parseInt(item.toString()))
@@ -217,6 +201,11 @@ const columns = [
   },
 ];
 
+function handleStatusChange(feature: Feature) {
+  console.log(feature);
+  alternativesStore.updateAlternativeWithFeature(feature);
+}
+
 function handleNewFeatureEntry() {
   if (
     store.features.length > 0 &&
@@ -245,5 +234,12 @@ function handleDeleteAllFeatures() {
   features.forEach((feat) =>
     alternativesStore.deleteAssessmentWithFeature(feat)
   );
+}
+
+function handleSyncWithAlternatives() {
+  let features = [...store.features];
+  features.forEach((feat) => {
+    alternativesStore.updateAlternativeWithFeature(feat);
+  });
 }
 </script>

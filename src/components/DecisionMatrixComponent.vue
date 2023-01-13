@@ -1,5 +1,5 @@
 <template>
-  <q-card style="width: 80vw" flat class="bg-grey-3">
+  <q-card style="width: 80vw" flat class="bg-grey-2">
     <q-card-section>
       <q-tabs
         v-model="tab"
@@ -25,29 +25,61 @@
         <q-tab-panel :name="tab" class="q-pa-none">
           <q-splitter v-model="splitterModel">
             <template v-slot:before>
-              <q-tabs v-model="innerTab" vertical class="text-teal">
+              <q-tabs
+                v-model="innerTab"
+                inline-label
+                vertical
+                class="text-teal"
+              >
                 <q-tab
                   v-for="assessment in store.getAlternativeByName(tab)
                     .assessments"
                   :key="assessment.id"
-                  :name="assessment.feature.name"
+                  :name="
+                    featureStore.getFeatureById(assessment.feature.id).name
+                  "
                   icon="checklist"
-                  :label="assessment.feature.name"
-                  class="content-stretch"
+                  :label="
+                    featureStore.getFeatureById(assessment.feature.id).name
+                  "
                   :class="
-                    assessment.feature.isExclusive
+                    featureStore.getFeatureById(assessment.feature.id)
+                      .isExclusive
                       ? 'text-warning'
                       : 'text-secondary'
                   "
                 >
-                  <q-badge color="secondary"
+                  <!-- <q-badge
+                    color="secondary"
+                    v-if="
+                      !featureStore.getFeatureById(assessment.feature.id)
+                        .isExclusive || isEditable
+                    "
                     ><q-rating
                       color="white"
-                      v-model="assessment.feature.status"
+                      v-model="
+                        featureStore.getFeatureById(assessment.feature.id)
+                          .status
+                      "
                       max="4"
-                      :readonly="!isEditable"
-                    ></q-rating></q-badge
-                ></q-tab>
+                      :readonly="
+                        !isEditable ||
+                        featureStore.getFeatureById(assessment.feature.id)
+                          .isExclusive
+                      "
+                    ></q-rating>
+                    <q-checkbox
+                      size="sm"
+                      v-if="isEditable"
+                      keep-color
+                      color="secondary"
+                      v-model="
+                        featureStore.getFeatureById(assessment.feature.id)
+                          .isExclusive
+                      "
+                      dense
+                  /></q-badge> -->
+                </q-tab>
               </q-tabs>
             </template>
 
@@ -61,13 +93,23 @@
               </q-tab-panels>
               <q-card flat class="text-black q-mt-md" align="justify">
                 <q-item>
-                  <q-item-section class="col-7">
-                    <q-item-label>{{
-                      featureStore.getFeatureByName(innerTab)?.name
-                    }}</q-item-label>
+                  <q-item-section class="col-6">
+                    <q-item-label
+                      >{{ featureStore.getFeatureByName(innerTab)?.name }}
+                    </q-item-label>
                     <q-item-label caption>
                       {{ featureStore.getFeatureByName(innerTab)?.description }}
                     </q-item-label>
+                  </q-item-section>
+                  <q-item-section class="col-1">
+                    <q-btn
+                      icon="settings"
+                      flat
+                      size="small"
+                      dense
+                      color="accent"
+                      ><q-badge label="Beta" floating></q-badge
+                    ></q-btn>
                   </q-item-section>
                   <q-item-section>
                     <q-rating
@@ -75,14 +117,18 @@
                         store
                           .getAlternativeByName(tab)
                           .assessments.find(
-                            (feat) => feat.feature.name === innerTab
+                            (feat) =>
+                              feat.feature.id ===
+                              featureStore.getFeatureByName(innerTab).id
                           ) != undefined
                       "
                       v-model="
                         store
                           .getAlternativeByName(tab)
                           .assessments.filter(
-                            (feat) => feat.feature.name === innerTab
+                            (feat) =>
+                              feat.feature.id ===
+                              featureStore.getFeatureByName(innerTab).id
                           )[0].score
                       "
                       color="secondary"
@@ -100,7 +146,9 @@
                         store
                           .getAlternativeByName(tab)
                           .assessments.find(
-                            (feat) => feat.feature.name === innerTab
+                            (feat) =>
+                              feat.feature.id ===
+                              featureStore.getFeatureByName(innerTab).id
                           ) != undefined
                       "
                       type="textarea"
@@ -109,7 +157,9 @@
                         store
                           .getAlternativeByName(tab)
                           .assessments.filter(
-                            (feat) => feat.feature.name === innerTab
+                            (feat) =>
+                              feat.feature.id ===
+                              featureStore.getFeatureByName(innerTab).id
                           )[0].justification
                       "
                     ></q-input>
@@ -129,19 +179,20 @@
     </q-card-section>
 
     <q-card-actions align="left">
-      <q-toggle icon="settings" v-model="isEditable"></q-toggle>
       <q-space />
       <q-btn
-        class="q-ma-md"
-        label="show results"
+        class="q-ma-sm"
+        icon="refresh"
+        @click="handleAssessment"
         color="secondary"
-        to="results"
       ></q-btn>
       <q-btn
-        class="q-ma-md"
-        label="Assess Alternatives"
-        @click="handleAssessment"
+        class="q-ma-sm"
+        label="results"
+        icon-right="check"
         color="primary"
+        to="results"
+        @click="handleAssessment"
       ></q-btn>
     </q-card-actions>
   </q-card>

@@ -35,14 +35,16 @@
 
 <script setup lang="ts">
 import { useAlternativesStore } from 'src/stores/alternative';
+import { useFeaturesStore } from 'src/stores/features';
 import { ref } from 'vue';
 
 const store = useAlternativesStore();
+const featureStore = useFeaturesStore();
 
 // Create a map of feature names to scores, with the scores for each alternative
 const featureScores = store.alternatives.reduce((acc: any, alternative) => {
   alternative.assessments.forEach((assessment) => {
-    const featureName = assessment.feature.name;
+    const featureName = featureStore.getFeatureById(assessment.feature.id).name;
     if (!acc[featureName]) {
       acc[featureName] = {
         feature: featureName, // Use the feature name as the value for the first column in the row
@@ -50,8 +52,12 @@ const featureScores = store.alternatives.reduce((acc: any, alternative) => {
     }
 
     // Add the score for the current alternative to the scores for the current feature
-    acc[featureName][alternative.name] =
-      assessment.score * assessment.feature.status;
+    if (assessment.feature.isExclusive)
+      acc[featureName][alternative.name] = assessment.score * 5;
+    else {
+      acc[featureName][alternative.name] =
+        assessment.score * assessment.feature.status;
+    }
   });
   return acc;
 }, {});

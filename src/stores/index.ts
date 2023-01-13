@@ -2,6 +2,10 @@ import { store } from 'quasar/wrappers';
 import { createPinia } from 'pinia';
 import { Router } from 'vue-router';
 import { LocalStorage } from 'quasar';
+import { ref, toRef, watch } from 'vue';
+import { useFeaturesStore } from './features';
+import { useAlternativesStore } from './alternative';
+import AlternativePage4105eb7c from 'app/dist/pwa/assets/AlternativePage.4105eb7c';
 
 /*
  * When adding new properties to stores, you should also
@@ -26,8 +30,21 @@ declare module 'pinia' {
 export default store((/* { ssrContext } */) => {
   const pinia = createPinia();
 
+  // watch(
+  //   pinia.state,
+  //   (state) => {
+  //     // persist the whole state to the local storage whenever it changes
+  //     localStorage.setItem('piniaState', JSON.stringify(state));
+  //   },
+  //   { deep: true }
+  // );
+  // if (LocalStorage.has('piniaState')) {
+  //   pinia.state.value = JSON.parse(LocalStorage.getItem('piniaState') ?? '');
+  // }
   pinia.use((context) => {
     const storeId = context.store.$id;
+    //TODO: Can conflict if stores get changed
+    //const store = useAlternativesStore();
 
     const serializer = {
       serialize: JSON.stringify,
@@ -35,7 +52,7 @@ export default store((/* { ssrContext } */) => {
     };
     if (LocalStorage.has(storeId)) {
       const fromStorage = serializer.deserialize(
-        localStorage.getItem(storeId) ?? ''
+        LocalStorage.getItem(storeId) ?? ''
       );
       if (fromStorage) {
         context.store.$patch(fromStorage);
@@ -43,7 +60,7 @@ export default store((/* { ssrContext } */) => {
     }
 
     context.store.$subscribe((mutation, state) => {
-      localStorage.setItem(storeId, serializer.serialize(state));
+      LocalStorage.set(storeId, serializer.serialize(state));
     });
   });
   return pinia;
