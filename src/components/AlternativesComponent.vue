@@ -106,20 +106,14 @@
                 v-model="
                   featureStore.getFeatureById(assessment.feature.id).name
                 "
-                :class="
+                :input-class="
                   featureStore.getFeatureById(assessment.feature.id).isExclusive
                     ? 'text-warning'
-                    : 'text-secondary'
+                    : ''
                 "
-                type="text"
                 readonly
+                type="text"
                 borderless
-                ><template v-slot:append>
-                  <q-icon
-                    name="warning"
-                    color="secondary"
-                    v-if="assessment.feature.isExclusive"
-                  /> </template
               ></q-input>
 
               <q-input
