@@ -3,9 +3,8 @@
     <q-header elevated class="bg-primary text-white">
       <q-toolbar>
         <q-btn dense flat round icon="menu" @click="toggleLeftDrawer" />
-
         <q-toolbar-title
-          ><q-btn label="Decision Matrix Helper" flat to="/" />
+          ><q-btn label="Decision Matrix Helper" flat to="/" icon="home" />
         </q-toolbar-title>
         <q-space />
         <q-btn
@@ -61,7 +60,11 @@
 
           <q-item clickable v-ripple to="decisionmatrix">
             <q-item-section avatar>
-              <q-icon name="functions" />
+              <q-icon name="functions" /><q-badge
+                v-if="alternativesStore.alternatives.length < 1"
+                floating
+                >{{ 'warning' }}</q-badge
+              >
             </q-item-section>
 
             <q-item-section> Decision Matrix </q-item-section>
