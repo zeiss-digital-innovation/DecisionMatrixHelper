@@ -1,5 +1,5 @@
 <template>
-  <q-page padding class="text-center q-pa-lg">
+  <q-page padding class="text-center">
     <DecisionMatrixComponent />
   </q-page>
 </template>

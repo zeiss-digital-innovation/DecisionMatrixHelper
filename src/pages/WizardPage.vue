@@ -6,6 +6,7 @@
         ref="stepper"
         color="primary"
         animated
+        flat
         class="justify-between"
       >
         <q-step
@@ -21,14 +22,19 @@
         <q-step
           :name="2"
           title="Add Alternatives"
-          caption="Create a list of all significant tools"
+          caption="Create a list of all significant alternatives"
           icon="create_new_folder"
           :done="step > 2"
         >
           <AlternativesComponent />
         </q-step>
 
-        <q-step :name="3" title="Decision Matrix" icon="add_comment">
+        <q-step
+          :name="3"
+          title="Decision Matrix"
+          caption="Evaluate each alternative per feature"
+          icon="add_comment"
+        >
           <DecisionMatrixComponentVue />
         </q-step>
 

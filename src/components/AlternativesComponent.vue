@@ -9,7 +9,7 @@
   >
     <template v-slot:top>
       <q-btn
-        class="q-ma-md"
+        class="q-ma-sm"
         color="primary"
         icon="add"
         label=""
@@ -17,8 +17,8 @@
         no-caps
       ></q-btn>
       <q-btn
-        class="q-ma-md"
-        color="primary"
+        class="q-ma-sm"
+        color="secondary"
         icon="delete"
         label=""
         @click="handleDeleteAllAlternatives"

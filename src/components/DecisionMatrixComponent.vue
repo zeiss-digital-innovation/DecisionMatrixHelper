@@ -1,5 +1,5 @@
 <template>
-  <q-card style="width: 80vw" flat class="bg-grey-2">
+  <q-card v-if="store.alternatives.length > 0" flat class="bg-grey-2">
     <q-card-section>
       <q-tabs
         v-model="tab"
@@ -21,66 +21,38 @@
 
       <q-separator />
 
-      <q-tab-panels v-model="tab">
+      <q-tab-panels v-if="featureStore.features.length > 0" v-model="tab">
         <q-tab-panel :name="tab" class="q-pa-none">
           <q-splitter v-model="splitterModel">
             <template v-slot:before>
-              <q-tabs
-                v-model="innerTab"
-                inline-label
-                vertical
-                class="text-teal"
-              >
-                <q-tab
-                  v-for="assessment in store.getAlternativeByName(tab)
-                    .assessments"
-                  :key="assessment.id"
-                  :name="
-                    featureStore.getFeatureById(assessment.feature.id).name
-                  "
-                  icon="checklist"
-                  :label="
-                    featureStore.getFeatureById(assessment.feature.id).name
-                  "
-                  :class="
-                    featureStore.getFeatureById(assessment.feature.id)
-                      .isExclusive
-                      ? 'text-warning'
-                      : 'text-secondary'
-                  "
+              <q-scroll-area style="height: 45vh">
+                <q-tabs
+                  v-model="innerTab"
+                  inline-label
+                  vertical
+                  class="text-teal"
                 >
-                  <!-- <q-badge
-                    color="secondary"
-                    v-if="
-                      !featureStore.getFeatureById(assessment.feature.id)
-                        .isExclusive || isEditable
+                  <q-tab
+                    v-for="assessment in store.getAlternativeByName(tab)
+                      .assessments"
+                    :key="assessment.id"
+                    :name="
+                      featureStore.getFeatureById(assessment.feature.id).name
                     "
-                    ><q-rating
-                      color="white"
-                      v-model="
-                        featureStore.getFeatureById(assessment.feature.id)
-                          .status
-                      "
-                      max="4"
-                      :readonly="
-                        !isEditable ||
-                        featureStore.getFeatureById(assessment.feature.id)
-                          .isExclusive
-                      "
-                    ></q-rating>
-                    <q-checkbox
-                      size="sm"
-                      v-if="isEditable"
-                      keep-color
-                      color="secondary"
-                      v-model="
-                        featureStore.getFeatureById(assessment.feature.id)
-                          .isExclusive
-                      "
-                      dense
-                  /></q-badge> -->
-                </q-tab>
-              </q-tabs>
+                    icon="checklist"
+                    :label="
+                      featureStore.getFeatureById(assessment.feature.id).name
+                    "
+                    :class="
+                      featureStore.getFeatureById(assessment.feature.id)
+                        .isExclusive
+                        ? 'text-warning'
+                        : 'text-secondary'
+                    "
+                  >
+                  </q-tab>
+                </q-tabs>
+              </q-scroll-area>
             </template>
 
             <template v-slot:after>
@@ -108,6 +80,11 @@
                       size="small"
                       dense
                       color="accent"
+                      @click="
+                        handleCurrentFeatureSettings(
+                          featureStore.getFeatureByName(innerTab)
+                        )
+                      "
                       ><q-badge label="Beta" floating></q-badge
                     ></q-btn>
                   </q-item-section>
@@ -116,7 +93,7 @@
                 <q-separator />
 
                 <q-card-section horizontal>
-                  <q-card-section class="col-7">
+                  <q-card-section class="col-7" style="min-height: 45vh">
                     <q-input
                       v-if="
                         store
@@ -173,9 +150,28 @@
           </q-splitter>
         </q-tab-panel>
       </q-tab-panels>
+      <q-card v-else flat class="q-pa-md"
+        ><q-card-section>
+          <p class="text-h6">You did not add any features before.</p>
+          <p class="subtitle">
+            Therefore features could not be listed. Try to add a feature
+            beforehand or go back to the main menu.
+          </p>
+        </q-card-section>
+        <q-btn
+          class="q-mr-md"
+          color="primary"
+          label="Add features first"
+          to="features"
+        ></q-btn>
+        <q-btn label="Go back" to="/"></q-btn>
+      </q-card>
     </q-card-section>
 
-    <q-card-actions align="left">
+    <q-card-actions
+      v-if="store.alternatives.length > 0 && featureStore.features.length > 0"
+      align="left"
+    >
       <q-space />
       <q-btn
         class="q-ma-sm"
@@ -193,6 +189,65 @@
       ></q-btn>
     </q-card-actions>
   </q-card>
+  <q-card flat v-else>
+    <q-card-section>
+      <p class="text-h6">You did not add any alternatives before.</p>
+      <p class="subtitle">
+        Therefore a decision could not be made. Try to add an alternative
+        beforehand or go back to the main menu.
+      </p>
+    </q-card-section>
+    <q-btn
+      class="q-mr-md"
+      color="primary"
+      label="add alternatives first"
+      to="alternatives"
+    ></q-btn>
+    <q-btn label="Go back" to="/"></q-btn>
+  </q-card>
+  <q-dialog v-model="showSettings">
+    <q-card>
+      <q-card-section>
+        <q-input
+          style="min-width: 128px"
+          label="Name"
+          v-model="featureStore.getFeatureByName(innerTab).name"
+          type="textarea"
+          :readonly="isReadOnly"
+          autogrow
+          borderless
+          dense
+        ></q-input>
+
+        <q-input
+          label="Description"
+          v-model="featureStore.getFeatureByName(innerTab).description"
+          type="textarea"
+          :readonly="isReadOnly"
+          autogrow
+          borderless
+          dense
+        ></q-input>
+        <q-checkbox
+          v-model="featureStore.getFeatureByName(innerTab).isExclusive"
+        />
+
+        <q-select
+          style="min-width: 180px"
+          label="Priority"
+          map-options
+          v-model="featureStore.getFeatureByName(innerTab).status"
+          :disable="featureStore.getFeatureByName(innerTab).isExclusive"
+          emit-value
+          borderless
+          dense
+        ></q-select>
+      </q-card-section>
+      <q-card-actions align="right">
+        <q-btn flat label="OK" color="primary" v-close-popup />
+      </q-card-actions>
+    </q-card>
+  </q-dialog>
 </template>
 
 <script setup lang="ts">
@@ -200,6 +255,8 @@ import { useAlternativesStore } from 'src/stores/alternative';
 import { useFeaturesStore } from 'src/stores/features';
 import { ref } from 'vue';
 import {} from 'src/components/StatusEnum';
+import {} from 'quasar';
+import { Feature } from './models';
 
 const store = useAlternativesStore();
 const featureStore = useFeaturesStore();
@@ -207,7 +264,8 @@ const featureStore = useFeaturesStore();
 const tab = ref(store.alternatives[0]?.name);
 const innerTab = ref(featureStore.features[0]?.name);
 const splitterModel = ref(20);
-const isEditable = ref(false);
+const isReadOnly = ref(false);
+const showSettings = ref(false);
 
 function handleAssessment() {
   store.alternatives.forEach((alternative) =>
@@ -222,5 +280,10 @@ function handleAssessment() {
     return 0;
   });
   store.isAssessed = true;
+}
+
+function handleCurrentFeatureSettings(feature: Feature) {
+  if (!feature) return;
+  showSettings.value = true;
 }
 </script>
