@@ -4,8 +4,20 @@
       <q-toolbar>
         <q-btn dense flat round icon="menu" @click="toggleLeftDrawer" />
         <q-toolbar-title
-          ><q-btn label="Decision Matrix Helper" flat to="/" icon="home" />
+          ><q-btn
+            label="Decision Matrix Helper"
+            flat
+            to="/"
+            icon-right="home"
+          />
+          <q-btn
+            label="Install"
+            flat
+            icon="download"
+            @click="showInstallPrompt"
+          />
         </q-toolbar-title>
+
         <q-space />
         <q-btn
           dense
@@ -67,7 +79,20 @@
               >
             </q-item-section>
 
-            <q-item-section> Decision Matrix </q-item-section>
+            <q-item-section> Decision Matrix </q-item-section> </q-item
+          ><q-space />
+          <q-item
+            class="text-accent"
+            clickable
+            v-ripple
+            href="https://github.com/zeiss-digital-innovation/DecisionMatrixHelper/"
+            target="_blank"
+          >
+            <q-item-section avatar>
+              <q-icon name="code"></q-icon>
+            </q-item-section>
+
+            <q-item-section> View on GitHub </q-item-section>
           </q-item>
         </q-list>
       </q-scroll-area>
@@ -161,18 +186,18 @@
     </q-page-container>
   </q-layout>
 </template>
-
+///
+<reference path="types.d.ts" />
 <script setup lang="ts">
-import { exportFile, LocalStorage } from 'quasar';
+import { exportFile, LocalStorage, useQuasar, EventBus } from 'quasar';
 import { useAlternativesStore } from 'src/stores/alternative';
 import { useFeaturesStore } from 'src/stores/features';
-import { getActivePinia } from 'pinia';
 import { ref } from 'vue';
 import { RouterView } from 'vue-router';
 
+const eventBus = new EventBus();
 const store = useFeaturesStore();
 const alternativesStore = useAlternativesStore();
-
 const leftDrawerOpen = ref(false);
 const miniState = ref(false);
 
@@ -181,6 +206,24 @@ const isSure = ref(false);
 
 const isLoading = ref(false);
 const filePicker = ref<File>();
+const showAppInstallBanner = ref(false);
+
+const deferredPrompt = ref<BeforeInstallPromptEvent | null>(null);
+
+function handleInstallPrompt(event: BeforeInstallPromptEvent) {
+  event.preventDefault();
+  deferredPrompt.value = event;
+}
+
+eventBus.on('beforeinstallprompt', handleInstallPrompt);
+
+function showInstallPrompt() {
+  console.log(deferredPrompt.value);
+  if (deferredPrompt.value) {
+    deferredPrompt.value.prompt();
+    deferredPrompt.value = null;
+  }
+}
 
 function toggleLeftDrawer() {
   leftDrawerOpen.value = !leftDrawerOpen.value;
@@ -192,6 +235,7 @@ function drawerClick(e: Event) {
     e.stopPropagation();
   }
 }
+
 function handleStateDownload(e: Event) {
   const storedData = JSON.stringify(LocalStorage.getAll(), null, 2);
   const status = exportFile(
